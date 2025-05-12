@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Vocabulary Trainer</title>
+  <style>
+    body { font-family: sans-serif; max-width: 500px; margin: auto; padding: 2rem; }
+    .correct { color: green; }
+    .incorrect { color: red; }
+  </style>
+</head>
+<body>
+  <h1>Vocabulary Trainer</h1>
+  <div id="question"></div>
+  <input type="text" id="answer" placeholder="Type your answer">
+  <button onclick="checkAnswer()">Submit</button>
+  <div id="feedback"></div>
+  <button onclick="nextWord()">Next Word</button>
+
+  <script>
+    const vocab = [
+      { word: "apple", translation: "Apfel" },
+      { word: "dog", translation: "Hund" },
+      { word: "book", translation: "Buch" },
+    ];
+
+    let current = 0;
+
+    // Load seen count from local storage
+    let seenCount = JSON.parse(localStorage.getItem("seenCount")) || {};
+
+    function showWord() {
+      const item = vocab[current];
+      document.getElementById("question").textContent = `Translate to German: ${item.word}`;
+      document.getElementById("answer").value = "";
+      document.getElementById("feedback").textContent = "";
+
+      seenCount[item.word] = (seenCount[item.word] || 0) + 1;
+      localStorage.setItem("seenCount", JSON.stringify(seenCount));
+    }
+
+    function checkAnswer() {
+      const userAnswer = document.getElementById("answer").value.trim().toLowerCase();
+      const correct = vocab[current].translation.toLowerCase();
+      const feedback = document.getElementById("feedback");
+      if (userAnswer === correct) {
+        feedback.textContent = "Correct!";
+        feedback.className = "correct";
+      } else {
+        feedback.textContent = `Wrong! The correct answer is "${correct}"`;
+        feedback.className = "incorrect";
+      }
+    }
+
+    function nextWord() {
+      current = (current + 1) % vocab.length;
+      showWord();
+    }
+
+    showWord();
+  </script>
+</body>
+</html>
+
